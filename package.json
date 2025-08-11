@@ -11,10 +11,10 @@
     "uuid": "^9.0.0"
   },
   "scripts": {
-    "build": "tsc && sam build",
+    "build": "tsc && cp package.json dist/ && cd dist && npm install --production && cd .. && sam build",
     "deploy": "npm run build && sam deploy --guided",
     "watch": "tsc --watch",
-    "start:local": "npm run watch & rm -r ../.aws-sam & sam local start-api"
+    "start:local": "tsc && cp package.json dist/ && cd dist && npm install --production && cd .. && sam local start-api"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.114",
