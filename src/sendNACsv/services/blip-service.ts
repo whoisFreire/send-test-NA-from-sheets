@@ -8,6 +8,7 @@ export class BlipService {
         const baseUrl = 'https://http.msging.net/commands'
         const payload = {
             "id": `${randomUUID()}`,
+            "to": "postmaster@msging.net",
             "method": "get",
             "uri": `/contexts/${phone}%40wa.gw.msging.net?withContextValues=true&$take=1000`
         }
@@ -16,8 +17,16 @@ export class BlipService {
                 Authorization: apiKey
             }
         }
-        const { data } = await this.axiosClient.post(baseUrl, payload, configAxios)
+
+        const response = await this.axiosClient.post(baseUrl, payload, configAxios)
+
+        const { data } = response
         if (data.status === 'failure') {
+            console.log({
+                phone,
+                message: data.reason.description,
+                code: data.reason.code,
+            })
             return {
                 message: data.reason.description,
                 code: data.reason.code,
@@ -33,16 +42,15 @@ export class BlipService {
         const baseUrl = 'https://http.msging.net/commands'
         const payload = {
             "id": `${randomUUID()}`,
+            "to": "postmaster@msging.net",
             "method": "delete",
             "uri": `/contexts/${phone}%40wa.gw.msging.net/${variable}`
         }
-
         const configAxios: AxiosRequestConfig = {
             headers: {
                 Authorization: apiKey
             }
         }
-
         const { data } = await this.axiosClient.post(baseUrl, payload, configAxios)
         return data
     }

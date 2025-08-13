@@ -4,7 +4,7 @@ Description: AWS Function
 Globals:
   Function:
     Tags:
-      APP: "RESET CONTACT APP"
+      APP: "send na csv APP"
       TYPE: "TEMPLATE APP"
     Timeout: 300
     Runtime: nodejs16.x
@@ -12,14 +12,14 @@ Globals:
       - x86_64
 
 Resources:
-  ResetContactFunction:
+  sendNACsvFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: dist/
-      Handler: resetContact/index.handler
+      Handler: sendNACsv/index.handler
       Events:
-        ResetContact:
+        sendNACsv:
           Type: Api
           Properties:
-            Path: /reset
+            Path: /send
             Method: post

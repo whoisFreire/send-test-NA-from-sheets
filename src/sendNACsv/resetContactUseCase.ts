@@ -2,6 +2,7 @@ import { AxiosInstance } from "axios";
 import { BlipService } from "./services/blip-service";
 import HttpStatusCode from "../commom/HttpStatusCode";
 import { transformCsv } from "./services/trasform-csv";
+import { env } from "../env";
 
 export class ResetContactUseCase {
     constructor(private axiosClient: AxiosInstance) { }
@@ -15,16 +16,14 @@ export class ResetContactUseCase {
                 }
             }
             const blipService = new BlipService(this.axiosClient)
+
             contacts.forEach(async (contact) => {
-                const phone = contact.telefone
-                const apiKey = contact.apiKey
+                const phone = contact.telefone.substr(0, 2) != '55' ? '55' + contact.telefone : contact.telefone
+                const environment = contact.ambiente
+                const apiKey = environment === 'dev' ? env.ROUTER_KEY_TEST : env.ROUTER_KEY
+                
                 const variables = await blipService.getUserContextVariables(phone, apiKey)
                 if (variables.code) {
-                    console.log({
-                        phone,
-                        message: variables.message,
-                        code: variables.code
-                    })
                     return
                 }
                 variables.forEach(async (variable) => {
@@ -36,10 +35,12 @@ export class ResetContactUseCase {
                     }
                 });
             })
-                return {
-                    message: "success",
-                    code: HttpStatusCode.NO_CONTENT
-                }
+
+            return {
+                message: "success",
+                code: HttpStatusCode.NO_CONTENT
+            }
+            
         } catch (err) {
             console.error('Error on get context')
             return {
